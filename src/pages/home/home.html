@@ -1,14 +1,31 @@
 <ion-header>
-  <ion-navbar>
+  <ion-navbar color="primary">
     <ion-title>
-      Ionic Blank
+      Book Clips
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  The world is your oyster.
-  <p>
-    If you get lost, the <a href="http://ionicframework.com/docs/v2">docs</a> will be your guide.
-  </p>
+  <ion-list>
+    <ion-card *ngFor="let note of notesService.notes; index as noteNumber">
+      <ion-card-content>
+        {{note.quote}}
+      </ion-card-content>
+      <ion-item>
+        <span *ngFor="let tag of note.tags">
+          <ion-badge>{{tag}}</ion-badge>
+        </span>
+        <button ion-button clear item-end (click)="deleteNote(noteNumber)">
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </ion-item>
+    </ion-card>
+  </ion-list>
+
+  <ion-fab bottom right>
+    <button ion-fab (click)="takePicture()">
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
 </ion-content>
