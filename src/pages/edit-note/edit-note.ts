@@ -19,7 +19,9 @@ export class EditNotePage {
               public notesService: NotesServiceProvider) {
     const name = navParams.get("name");
 
-    this.loadingView = loadingController.create();
+    this.loadingView = loadingController.create({
+      content: "Analyzing..."
+    });
     this.loadingView.present();
 
     const thiz = this;
@@ -38,9 +40,9 @@ export class EditNotePage {
       console.log(data);
 
       thiz.detectedText = data.TextDetections
-        .filter(value => value.Type == "WORD")
+        .filter(value => value.Type == "LINE")
         .map(value => value.DetectedText)
-        .join(" ");
+        .join("\n");
     })
   }
 
@@ -49,7 +51,9 @@ export class EditNotePage {
   }
 
   saveNewNote() {
-    this.loadingView = this.loadingController.create();
+    this.loadingView = this.loadingController.create({
+      content: "Getting tags..."
+    });
     this.loadingView.present();
 
     let thiz = this;

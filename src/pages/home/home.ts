@@ -38,7 +38,9 @@ export class HomePage {
       quality: 100,
       encodingType: this.camera.EncodingType.JPEG
     }).then((fileUri) => {
-      this.loadingView = this.loadingController.create();
+      this.loadingView = this.loadingController.create({
+        content: "Uploading..."
+      });
       this.loadingView.present();
 
       console.log(fileUri);
