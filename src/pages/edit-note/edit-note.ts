@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
+import {AlertController, IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
 import * as AWS from "aws-sdk";
 import * as Comprehend from "aws-sdk/clients/comprehend"
 import {NotesServiceProvider} from "../../providers/notes-service/notes-service";
@@ -15,8 +15,9 @@ export class EditNotePage {
 
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
-              public loadingController: LoadingController,
-              public notesService: NotesServiceProvider) {
+              public notesService: NotesServiceProvider,
+              public alertController: AlertController,
+              public loadingController: LoadingController) {
     const name = navParams.get("name");
 
     this.loadingView = loadingController.create({
@@ -36,13 +37,17 @@ export class EditNotePage {
     }, function (err, data) {
       thiz.loadingView.dismiss();
 
-      console.log(err);
-      console.log(data);
-
-      thiz.detectedText = data.TextDetections
-        .filter(value => value.Type == "LINE")
-        .map(value => value.DetectedText)
-        .join("\n");
+      if (err != null) {
+        thiz.alertController.create({
+          title: "Something went wrong...",
+          message: "Please try again later. The technical message we got was: " + err.message
+        });
+      } else {
+        thiz.detectedText = data.TextDetections
+          .filter(value => value.Type == "LINE")
+          .map(value => value.DetectedText)
+          .join("\n");
+      }
     })
   }
 
@@ -64,21 +69,25 @@ export class EditNotePage {
     }, function(err, data) {
       thiz.loadingView.dismiss();
 
-      console.log(err);
-      console.log(data);
+      if (err != null) {
+        thiz.alertController.create({
+          title: "Something went wrong...",
+          message: "Please try again later. The technical message we got was: " + err.message
+        });
+      } else {
+        const tags = data.Entities
+          .filter(e => e.Type != "QUANTITY")
+          .map(e => e.Text);
 
-      const tags = data.Entities
-        .filter(e => e.Type != "QUANTITY")
-        .map(e => e.Text);
-
-      thiz.notesService.addNote({
-        book: "",
-        author: "",
-        quote: thiz.detectedText,
-        tags: tags
-      }).then(
-        () => thiz.navCtrl.pop()
-      );
+        thiz.notesService.addNote({
+          book: "",
+          author: "",
+          quote: thiz.detectedText,
+          tags: tags
+        }).then(
+          () => thiz.navCtrl.pop()
+        );
+      }
     });
   }
 }

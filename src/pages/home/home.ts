@@ -43,14 +43,9 @@ export class HomePage {
       });
       this.loadingView.present();
 
-      console.log(fileUri);
-
       const index: number = fileUri.lastIndexOf('/') + 1;
       const dir = fileUri.substring(0, index);
       const name = fileUri.substring(index);
-
-      console.log(dir);
-      console.log(name);
 
       this.file.readAsArrayBuffer(dir, name).then(
         buffer => {
@@ -60,11 +55,15 @@ export class HomePage {
             Body: buffer,
             ACL: "public-read"
           }, function (err, data: AWS.S3.ManagedUpload.SendData) {
-            console.log(err);
-            console.log(data);
-
             thiz.loadingView.dismiss();
-            thiz.navCtrl.push(EditNotePage, {name: data.Key});
+            if (err != null) {
+              thiz.alertController.create({
+                title: "Something went wrong...",
+                message: "Please try again later. The technical message we got was: " + err.message
+              });
+            } else {
+              thiz.navCtrl.push(EditNotePage, {name: data.Key});
+            }
           });
         }
       );
