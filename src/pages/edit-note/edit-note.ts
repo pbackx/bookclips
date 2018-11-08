@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
-import {AlertController, IonicPage, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
+import {AlertController, Loading, LoadingController, NavController, NavParams} from 'ionic-angular';
 import * as AWS from "aws-sdk";
 import * as Comprehend from "aws-sdk/clients/comprehend"
 import {NotesServiceProvider} from "../../providers/notes-service/notes-service";
 
-@IonicPage()
 @Component({
   selector: 'page-edit-note',
   templateUrl: 'edit-note.html',
